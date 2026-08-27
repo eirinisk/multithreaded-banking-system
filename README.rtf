@@ -1,0 +1,55 @@
+# Multi-Threaded Banking System in C (TCP/IP)
+
+## Overview
+This project implements a concurrent client-server banking system using C. It utilizes TCP/IP sockets for network communication and POSIX threads (pthreads) to handle multiple client connections simultaneously. The system is designed with thread safety in mind, ensuring data integrity during concurrent financial transactions.
+
+This project was developed as part of the Advanced Programming coursework at the Department of Computer Science with Applications in Biomedicine, University of Thessaly.
+
+## Core Features
+* **Multi-Client Architecture:** Employs `pthread_create` to serve multiple clients concurrently without blocking the main server execution.
+* **Concurrency Control:** Utilizes `pthread_mutex` to prevent race conditions and synchronize memory access during critical operations (e.g., account balance updates).
+* **State Persistence:** Automatically saves and loads account data from a local binary file (`accounts.dat`), ensuring that user states are maintained across server reboots.
+* **Financial Operations:** Supports account creation, deposits, withdrawals, balance inquiries, and currency exchange across multiple currencies (USD, EUR, GBP).
+
+## Prerequisites
+* A Unix/Linux environment (or WSL on Windows).
+* GCC compiler.
+
+## Compilation
+Open your terminal and compile the server and client separately. Note that the server requires the `pthread` library.
+
+```bash
+# Compile the server
+gcc server.c -o server -lpthread
+
+# Compile the client
+gcc client.c -o client
+```
+
+## Execution & Usage
+You will need two separate terminal windows to run this application.
+
+1. **Start the Server:**
+   ```bash
+   ./server
+   ```
+   *(The server will start listening on port 8080)*
+
+2. **Start the Client (in a new terminal):**
+   ```bash
+   ./client
+   ```
+
+3. **Available Commands:**
+   Once connected, you can interact with the server using the following commands:
+   * `create <username>` - Opens a new bank account.
+   * `balance <username>` - Displays current balances in all currencies.
+   * `deposit <username> <CURRENCY> <amount>` - Deposits funds (e.g., `deposit anthi EUR 100`).
+   * `withdraw <username> <CURRENCY> <amount>` - Withdraws funds (e.g., `withdraw anthi USD 20`).
+   * `exchange <username> <FROM_CURRENCY> <TO_CURRENCY> <amount>` - Converts currency based on static exchange rates.
+   * `exit` - Disconnects the client.
+
+## Technical Details & Architecture
+* **Socket Programming:** Uses `AF_INET` and `SOCK_STREAM` for reliable, connection-oriented data transmission.
+* **Resource Management:** Implements `pthread_detach()` to prevent zombie threads and safely frees dynamically allocated socket memory.
+* **Memory Safety:** Strict input parsing limits (`sscanf` with bounds) and zero-initialization of buffers to prevent buffer overflows and segmentation faults.
